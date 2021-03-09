@@ -33,6 +33,7 @@ class OrderView(APIView):
 
     def get(self, request, pk=0):
         user = get_auth_user(request)
+        data = []
         if pk > 0:
             order, response_status = self.get_object(pk, user)
             if response_status == status.HTTP_404_NOT_FOUND:
@@ -45,9 +46,9 @@ class OrderView(APIView):
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
         else:
             orders = Order.objects.filter(user=user).exclude(status=OrderStatus.canceled)
-            data = []
             for order in orders:
                 data.append(OrderSerializer(order).data)
+        # TODO: check for empty product list
         return Response({'data': data,
                          'error': False})
 
@@ -68,3 +69,29 @@ class OrderView(APIView):
                     return Response({'error': True, 'message': 'Not valid order status'}, status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, pk=0):
+        user = get_auth_user(request)
+        tobe_deleted = None
+        if pk > 0:
+            order, response_status = self.get_object(pk, user)
+            tobe_deleted = ProductOrder.objects.filter(order=order)
+            if response_status == status.HTTP_404_NOT_FOUND:
+                return Response({'error': True, 'message': 'requested order dose not exist'}, response_status)
+            elif response_status == status.HTTP_403_FORBIDDEN:
+                return Response({'error': True, 'message': 'Not your order'}, response_status)
+        elif pk == 0:
+            order = Order.objects.create(user=user)
+        else:
+            return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
+
+        data = request.data.get('data')
+        serializer = ProductOrderFlatSerializer(data=data, many=True)
+        if serializer.is_valid():
+            # TODO: must be changed for production, specially without log, it is dangerous
+            if tobe_deleted is not None:
+                tobe_deleted.delete()
+            serializer.save(order=order)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -70,20 +70,12 @@ class ProductFeature(models.Model):
         return self.product.title+' '+self.feature.title
 
 
-class ProductOrderFeatureValue(models.Model):
-    product_order = models.ForeignKey('ProductOrder', on_delete=models.CASCADE)
-    feature_value = models.ForeignKey(FeaturesValue, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.id) + self.product_order.__str__() + self.feature_List.__str__()
-
-
 class ProductOrder(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey('Order', on_delete=models.CASCADE)
     count = models.IntegerField()
     consume_location = models.SmallIntegerField(choices=ConsumeLocation.types)
-    feature_value_list = models.ManyToManyField(FeaturesValue, through=ProductOrderFeatureValue)
+    feature_value = models.ForeignKey(FeaturesValue, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.count.__str__()+'*'+self.product.title+'--orderNo: '+self.order.id.__str__()
