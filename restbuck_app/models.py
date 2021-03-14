@@ -83,6 +83,9 @@ class Product(models.Model):
 
 
 class ProductFeature(models.Model):
+    """
+    Relation of :model:`restbuck_app.Product` and  :model:`restbuck_app.Feature`
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
 
