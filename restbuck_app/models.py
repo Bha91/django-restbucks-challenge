@@ -111,9 +111,14 @@ class ProductOrder(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    status = models.SmallIntegerField(choices=OrderStatus.types, default=OrderStatus.waiting)
-    product_list = models.ManyToManyField(Product, through=ProductOrder, related_name='products')
+    """
+    Store a Client order.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.PROTECT, help_text="client")
+    status = models.SmallIntegerField(choices=OrderStatus.types, default=OrderStatus.waiting, help_text="state of order")
+    product_list = models.ManyToManyField(Product, through=ProductOrder, related_name='products',
+                                          help_text="list of products client ordered")
 
     def __str__(self):
         return 'id:'+self.id.__str__() + '-' + self.user.__str__() + '-' + ', '.join([x.title for x in self.product_list.all()])
