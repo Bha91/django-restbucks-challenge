@@ -83,18 +83,6 @@ class Product(models.Model):
         return self.title
 
 
-class ProductFeature(models.Model):
-    """
-    Relation of :model:`restbuck_app.Product` and  :model:`restbuck_app.Feature`
-    """
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.product.title+' '+self.feature.title
-
-
 class ProductOrder(models.Model):
     """
     each item of client order. an :model:`restbuck_app.Order` can have multiple ProductOrder
