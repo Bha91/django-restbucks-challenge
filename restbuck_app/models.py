@@ -3,6 +3,13 @@ from django.contrib.auth.models import User
 
 
 class ConsumeLocation(models.Model):
+    """
+    Type of order consumption chooses by the client.
+
+    0- take_away
+    1- in_shop
+    """
+
     take_away = 0
     in_shop = 1
     types = (
