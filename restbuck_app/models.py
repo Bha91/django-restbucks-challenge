@@ -96,11 +96,15 @@ class ProductFeature(models.Model):
 
 
 class ProductOrder(models.Model):
+    """
+    each item of client order. an :model:`restbuck_app.Order` can have multiple ProductOrder
+    """
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey('Order', on_delete=models.CASCADE)
-    count = models.IntegerField()
+    count = models.IntegerField(help_text="number of product client ordered")
     consume_location = models.SmallIntegerField(choices=ConsumeLocation.types)
-    feature_value = models.ForeignKey(FeaturesValue, on_delete=models.PROTECT)
+    feature_value = models.ForeignKey(FeaturesValue, on_delete=models.PROTECT, help_text="ordered option of product")
 
     def __str__(self):
         return self.count.__str__()+'*'+self.product.title+'--orderNo: '+self.order.id.__str__()
