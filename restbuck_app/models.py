@@ -76,7 +76,7 @@ class Product(models.Model):
     """
     title: str = models.CharField(max_length=255, help_text="display title for a product")
     cost: int = models.IntegerField(help_text="cost of product")
-    feature_list: Feature = models.ForeignKey(Feature, null=True, on_delete=models.PROTECT)
+    feature: Feature = models.ForeignKey(Feature, null=True, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.title

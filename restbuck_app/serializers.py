@@ -39,7 +39,7 @@ class ProductSerializer(serializers.ModelSerializer):
                   'title',
                   'cost',
                   'consume_location',
-                  'feature_list')
+                  'feature')
 
     def get_consume_location(self, obj):
         return ConsumeLocation.types
