@@ -44,13 +44,23 @@ class OrderStatus(models.Model):
 
 
 class Feature(models.Model):
-    title = models.CharField(max_length=255)
-    # TODO: change to 'label' and 'code' to support multiple 'kind' for different product
+    """
+    Feature or option of products, multiple :model:`restbuck_app.Product` may have same feature.
+    relation store in :model:`restbuck_app.ProductFeature`.
+    """
+
+    title: str = models.CharField(max_length=255, help_text="A display title for one product's feature")
+    # TODO: change to 'display_name' and  unique 'code' to support multiple 'kind' for different product
 
     def __str__(self):
         return self.title
 
-    def get_values(self):
+    def get_values(self) -> str:
+        """
+        get a string of this Feature's related Values in :model:`restbuck_app.FeaturesValue`.
+        :return: string concat title of related FeaturesValues
+        """
+
         return ', '.join([y.title for y in FeaturesValue.objects.filter(feature=self)])
 
 
