@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Manager
 
 
 class ConsumeLocation(models.Model):
@@ -70,9 +71,12 @@ class FeaturesValue(models.Model):
 
 
 class Product(models.Model):
-    title = models.CharField(max_length=255)
-    cost = models.IntegerField()
-    feature_list = models.ManyToManyField(Feature, through='ProductFeature')
+    """
+    Products Model. related to :model:`restbuck_app.Order`, :model:`restbuck_app.ProductFeature`
+    """
+    title: str = models.CharField(max_length=255, help_text="display title for a product")
+    cost: int = models.IntegerField(help_text="cost of product")
+    feature_list: Manager = models.ManyToManyField(Feature, through='ProductFeature', help_text=)
 
     def __str__(self):
         return self.title

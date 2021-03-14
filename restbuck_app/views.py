@@ -71,6 +71,7 @@ class OrderView(APIView):
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, pk=0):
+        # TODO: check product feature possibility
         user = get_auth_user(request)
         tobe_deleted = None
         if pk > 0:
