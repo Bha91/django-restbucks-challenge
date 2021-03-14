@@ -29,7 +29,7 @@ class FeatureWithValuesSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    feature_list = FeatureWithValuesSerializer(read_only=True, many=True)
+    feature = FeatureWithValuesSerializer(read_only=True)
     consume_location = SerializerMethodField()
     # TODO: check standard serializer for choices
 
@@ -39,7 +39,7 @@ class ProductSerializer(serializers.ModelSerializer):
                   'title',
                   'cost',
                   'consume_location',
-                  'feature_list')
+                  'feature')
 
     def get_consume_location(self, obj):
         return ConsumeLocation.types

@@ -16,21 +16,8 @@ class FeaturesValueAdmin(admin.ModelAdmin):
 admin.site.register(FeaturesValue, FeaturesValueAdmin)
 
 
-class ProductFeatureAdmin(admin.ModelAdmin):
-    list_display = [f.name for f in ProductFeature._meta.fields]
-
-
-admin.site.register(ProductFeature, ProductFeatureAdmin)
-
-
-class ProductFeatureInline(admin.TabularInline):
-    model = ProductFeature
-    extra = 1
-
-
 class ProductAdmin(admin.ModelAdmin):
     list_display = [f.name for f in Product._meta.fields]
-    inlines = (ProductFeatureInline,)
 
 
 admin.site.register(Product, ProductAdmin)

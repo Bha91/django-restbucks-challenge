@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'restbuck_app.apps.RestbuckAppConfig',
     'rest_framework',
+    'django.contrib.admindocs',
 ]
 
 MIDDLEWARE = [
