@@ -1,3 +1,4 @@
+import rest_framework
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +8,12 @@ from restbuck_app.serializers import *
 
 
 class Menu(APIView):
+    """ handle list of available product for client order """
+
     def get(self, request):
+        """
+
+        """
         products = Product.objects.all()
         data = []
         for product in products:
