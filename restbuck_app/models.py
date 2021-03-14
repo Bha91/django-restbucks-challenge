@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Manager
 
 
 class ConsumeLocation(models.Model):
@@ -71,9 +70,7 @@ class FeaturesValue(models.Model):
 
 
 class Product(models.Model):
-    """
-    Products Model. related to :model:`restbuck_app.Order`, :model:`restbuck_app.ProductFeature`
-    """
+    """ Products Model. related to :model:`restbuck_app.Order`, :model:`restbuck_app.ProductFeature` """
 
     title: str = models.CharField(max_length=255, help_text="display title for a product")
     cost: int = models.IntegerField(help_text="cost of product")
@@ -84,9 +81,7 @@ class Product(models.Model):
 
 
 class ProductOrder(models.Model):
-    """
-    each item of client order. an :model:`restbuck_app.Order` can have multiple ProductOrder
-    """
+    """ each item of client order. an :model:`restbuck_app.Order` can have multiple ProductOrder """
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey('Order', on_delete=models.CASCADE)
@@ -99,9 +94,7 @@ class ProductOrder(models.Model):
 
 
 class Order(models.Model):
-    """
-    Store a Client order.
-    """
+    """ Store a Client order. """
 
     user = models.ForeignKey(User, on_delete=models.PROTECT, help_text="client")
     status = models.SmallIntegerField(choices=OrderStatus.types, default=OrderStatus.waiting, help_text="state of order")
