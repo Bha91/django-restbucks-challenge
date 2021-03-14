@@ -55,14 +55,6 @@ class Feature(models.Model):
     def __str__(self):
         return self.title
 
-    def get_values(self) -> str:
-        """
-        get a string of this Feature's related Values in :model:`restbuck_app.FeaturesValue`.
-        :return: string concat title of related FeaturesValues
-        """
-
-        return ', '.join([y.title for y in FeaturesValue.objects.filter(feature=self)])
-
 
 class FeaturesValue(models.Model):
     """
@@ -84,14 +76,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-
-    @property
-    def feature_lists(self):
-        return ', '.join([x.title for x in self.feature_list.all()])
-
-    @property
-    def feature_list_with_values(self):
-        return ', '.join([x.title+': '+x.get_values() for x in self.feature_list.all()])
 
 
 class ProductFeature(models.Model):
