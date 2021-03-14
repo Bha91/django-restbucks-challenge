@@ -63,7 +63,7 @@ class FeaturesValue(models.Model):
     relation store in :model:`restbuck_app.ProductFeature`
     """
 
-    feature: Feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
+    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
     title: str = models.CharField(max_length=255, help_text="display title for an option of feature")
 
     def __str__(self):
@@ -74,9 +74,10 @@ class Product(models.Model):
     """
     Products Model. related to :model:`restbuck_app.Order`, :model:`restbuck_app.ProductFeature`
     """
+
     title: str = models.CharField(max_length=255, help_text="display title for a product")
     cost: int = models.IntegerField(help_text="cost of product")
-    feature: Feature = models.ForeignKey(Feature, null=True, on_delete=models.PROTECT)
+    feature = models.ForeignKey(Feature, null=True, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.title
@@ -86,6 +87,7 @@ class ProductFeature(models.Model):
     """
     Relation of :model:`restbuck_app.Product` and  :model:`restbuck_app.Feature`
     """
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
 
