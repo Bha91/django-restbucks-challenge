@@ -19,6 +19,16 @@ class ConsumeLocation(models.Model):
 
 
 class OrderStatus(models.Model):
+    """
+    Type of Order Status.
+
+    0- waiting: new orders, changing order by clients is available just in this state.
+    1- preparation: choose by CoffeeShop manager to inform client.
+    2- ready: choose by CoffeeShop manager to inform client.
+    3- delivered: choose by CoffeeShop manager for finished orders.
+    4- canceled: deleted orders by clients will have this state.
+    """
+
     waiting = 0
     preparation = 1
     ready = 2
