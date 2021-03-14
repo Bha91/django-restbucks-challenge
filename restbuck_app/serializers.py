@@ -29,7 +29,7 @@ class FeatureWithValuesSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    feature_list = FeatureWithValuesSerializer(read_only=True, many=True)
+    feature = FeatureWithValuesSerializer(read_only=True)
     consume_location = SerializerMethodField()
     # TODO: check standard serializer for choices
 
