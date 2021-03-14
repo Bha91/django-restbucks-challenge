@@ -11,9 +11,7 @@ class Menu(APIView):
     """ handle list of available product for client order """
 
     def get(self, request):
-        """
-
-        """
+        """ GET: all product with their feature and features values """
         products = Product.objects.all()
         data = []
         for product in products:
