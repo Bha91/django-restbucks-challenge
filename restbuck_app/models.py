@@ -55,8 +55,13 @@ class Feature(models.Model):
 
 
 class FeaturesValue(models.Model):
-    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    """
+    Stores an option of one :model:`restbuck_app.Feature`.
+    relation store in :model:`restbuck_app.ProductFeature`
+    """
+
+    feature: Feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
+    title: str = models.CharField(max_length=255, help_text="display title for an option of feature")
 
     def __str__(self):
         return self.feature.title+'-->'+self.title
