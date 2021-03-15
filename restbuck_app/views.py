@@ -29,6 +29,7 @@ class OrderView(APIView):
     def get_object(self, pk: int, user: User):
         """ get order by id and check if is related to request user.
 
+        :param user: Order owner, an User onject
         :param pk: primary key or id of Order.
         :returns: Order object (or None if can not find related object) and  status code to return to user.
         :rtype: Order
