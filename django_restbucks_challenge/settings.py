@@ -112,6 +112,14 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+# email Configuration
+EMAIL_USE_TLS = False
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+
+
 try:
     from .local_settings import *
 except ImportError:
