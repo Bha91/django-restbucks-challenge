@@ -9,12 +9,6 @@ class FeatureValueSerializer(serializers.ModelSerializer):
         fields = ('id', 'title')
 
 
-class FeatureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feature
-        fields = ('title',)
-
-
 class FeatureWithValuesSerializer(serializers.ModelSerializer):
     """ Serialize :model:`restbuck_app.Feature` with nested list of related values """
 
