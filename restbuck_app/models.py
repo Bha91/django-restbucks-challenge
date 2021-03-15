@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from django.db import models
 from django.contrib.auth.models import User
+from django_restbucks_challenge.settings import EMAIL_SENDER_NOREPLAY
 
 
 class ConsumeLocation(models.Model):
@@ -113,13 +114,12 @@ class Order(models.Model):
         """ override default save method to notify user on state change."""
 
         if self.previous_state != self.state:
-            email_subject = 'Order Status changed'
+            email_subject = 'Order state changed!'
             email_body = 'your order numbered {} has been changed from {} state to {}.\n Best\nRestBucks CoffeeShop'
-            sender_email = 'noreplay@restbucks.com'
             send_mail(
                 email_subject,
                 email_body.format(self.id, self.get_previous_state_display(), self.get_state_display()),
-                sender_email,
+                EMAIL_SENDER_NOREPLAY,
                 [self.user.email],
                 fail_silently=False,
             )
