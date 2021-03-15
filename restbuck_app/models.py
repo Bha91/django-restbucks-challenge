@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -104,5 +105,25 @@ class Order(models.Model):
                                           help_text="list of products client ordered")
 
     def __str__(self):
-        return 'id:'+self.id.__str__() + '-' + self.user.__str__() + '-' + ', '.join([x.title for x in self.product_list.all()])
+        return 'id:' + self.id.__str__() + '-' + \
+               self.user.__str__() + '-' + \
+               ', '.join([x.title for x in self.product_list.all()])
+
+    def save(self, *args, **kwargs):
+        """ override default save method to notify user on state change."""
+
+        if self.previous_state != self.state:
+            email_subject = 'Order Status changed'
+            email_body = 'your order numbered {} has been changed from {} state to {}.\n Best\nRestBucks CoffeeShop'
+            sender_email = 'noreplay@restbucks.com'
+            send_mail(
+                email_subject,
+                email_body.format(self.id, self.get_previous_state_display(), self.get_state_display()),
+                sender_email,
+                [self.user.email],
+                fail_silently=False,
+            )
+            self.previous_state = self.state
+        return super(Order, self).save(*args, **kwargs)
+
 
