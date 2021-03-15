@@ -28,20 +28,17 @@ class OrderStatus(models.Model):
     1- preparation: choose by CoffeeShop manager to inform client.
     2- ready: choose by CoffeeShop manager to inform client.
     3- delivered: choose by CoffeeShop manager for finished orders.
-    4- canceled: deleted orders by clients will have this state.
     """
 
     waiting = 0
     preparation = 1
     ready = 2
     delivered = 3
-    canceled = 4
     types = (
         (waiting, 'waiting'),
         (preparation, 'preparation'),
         (ready, 'ready'),
         (delivered, 'delivered'),
-        (canceled, 'canceled'),
     )
 
 
@@ -104,6 +101,7 @@ class Order(models.Model):
                                               help_text="previous state of order")
     product_list = models.ManyToManyField(Product, through=ProductOrder, related_name='products',
                                           help_text="list of products client ordered")
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return 'id:' + self.id.__str__() + '-' + \

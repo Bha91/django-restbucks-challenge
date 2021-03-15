@@ -35,7 +35,7 @@ class OrderView(APIView):
         :rtype: Order
         :rtype: rest_framework.status
         """
-        if Order.objects.filter(pk=pk).exclude(status=OrderStatus.canceled).exists():
+        if Order.objects.filter(pk=pk, is_deleted=False).exists():
             order = Order.objects.get(pk=pk)
             response_status = status.HTTP_200_OK
             if order.user != user:
@@ -65,7 +65,7 @@ class OrderView(APIView):
         elif pk < 0:
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
         else:
-            orders = Order.objects.filter(user=user).exclude(status=OrderStatus.canceled)
+            orders = Order.objects.filter(user=user, is_deleted=False)
             for order in orders:
                 data.append(OrderSerializer(order).data)
         # TODO: check for empty product list
@@ -89,7 +89,7 @@ class OrderView(APIView):
                 return Response({'error': True, 'message': 'Not your order'}, response_status)
             elif response_status == status.HTTP_200_OK:
                 if order.status == OrderStatus.waiting:
-                    order.status = OrderStatus.canceled
+                    order.is_deleted = True
                     order.save()
                     return Response(status=status.HTTP_200_OK)
                 else:
