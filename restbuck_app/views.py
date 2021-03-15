@@ -8,14 +8,12 @@ from restbuck_app.serializers import *
 
 
 class Menu(APIView):
-    """ handle list of available product for client order """
+    """ handle list of products for client order """
 
     def get(self, request):
         """ GET: all product with their feature and features values """
         products = Product.objects.all()
-        data = []
-        for product in products:
-            data.append(ProductSerializer(product).data)
+        data = ProductSerializer(products, many=True).data
         return Response({'data': data,
                          'error': False})
 
