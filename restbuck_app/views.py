@@ -93,7 +93,7 @@ class OrderView(APIView):
                     order.save()
                     return Response(status=status.HTTP_200_OK)
                 else:
-                    return Response({'error': True, 'message': 'Not valid order status'}, status.HTTP_400_BAD_REQUEST)
+                    return Response({'error': True, 'message': 'Not valid order state'}, status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
 

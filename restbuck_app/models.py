@@ -66,7 +66,7 @@ class FeaturesValue(models.Model):
     title: str = models.CharField(max_length=255, help_text="display title for an option of feature")
 
     def __str__(self):
-        return self.feature.title+'-->'+self.title
+        return self.feature.title + '-->' + self.title
 
 
 class Product(models.Model):
@@ -90,14 +90,16 @@ class ProductOrder(models.Model):
     feature_value = models.ForeignKey(FeaturesValue, on_delete=models.PROTECT, help_text="ordered option of product")
 
     def __str__(self):
-        return self.count.__str__()+'*'+self.product.title+'--orderNo: '+self.order.id.__str__()
+        return self.count.__str__() + '*' + self.product.title + '--orderNo: ' + self.order.id.__str__()
 
 
 class Order(models.Model):
     """ Store a Client order. """
 
     user = models.ForeignKey(User, on_delete=models.PROTECT, help_text="client")
-    status = models.SmallIntegerField(choices=OrderStatus.types, default=OrderStatus.waiting, help_text="state of order")
+    state = models.SmallIntegerField(choices=OrderStatus.types, default=OrderStatus.waiting, help_text="state of order")
+    previous_state = models.SmallIntegerField(choices=OrderStatus.types, default=OrderStatus.waiting,
+                                              help_text="previous state of order")
     product_list = models.ManyToManyField(Product, through=ProductOrder, related_name='products',
                                           help_text="list of products client ordered")
 
