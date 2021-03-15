@@ -19,11 +19,21 @@ class Menu(APIView):
 
 
 def get_auth_user(request):
+    """ method in phase development bypass authentication"""
     return User.objects.get(id=1)
 
 
 class OrderView(APIView):
-    def get_object(self, pk, user):
+    """ handle client order API """
+
+    def get_object(self, pk: int, user: User):
+        """ get order by id and check if is related to request user.
+
+        :param pk: primary key or id of Order.
+        :returns: Order object (or None if can not find related object) and  status code to return to user.
+        :rtype: Order
+        :rtype: rest_framework.status
+        """
         if Order.objects.filter(pk=pk).exclude(status=OrderStatus.canceled).exists():
             order = Order.objects.get(pk=pk)
             response_status = status.HTTP_200_OK
@@ -34,6 +44,13 @@ class OrderView(APIView):
             return None, status.HTTP_404_NOT_FOUND
 
     def get(self, request, pk=0):
+        """ GET: user's order by id, or all of his order if no pk provided
+
+        :param request: API request
+        :param pk: primary key or id of Order.
+        :type pk: int
+        :return: API response data and status code
+        """
         user = get_auth_user(request)
         data = []
         if pk > 0:
@@ -55,6 +72,13 @@ class OrderView(APIView):
                          'error': False})
 
     def delete(self, request, pk=0):
+        """ DELETE: user can delete his waiting order by id.
+
+        :param request: API request
+        :param pk: primary key or id of Order.
+        :type pk: int
+        :return: API response data and status code
+        """
         user = get_auth_user(request)
         if pk > 0:
             order, response_status = self.get_object(pk, user)
@@ -73,6 +97,14 @@ class OrderView(APIView):
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, pk=0):
+        """
+        POST: new order of user or change 'waiting' order.
+
+        :param request: API request
+        :param pk: primary key or id of Order.
+        :type pk: int
+        :return: API response data and status code
+        """
         # TODO: check product feature possibility
         user = get_auth_user(request)
         tobe_deleted = None
