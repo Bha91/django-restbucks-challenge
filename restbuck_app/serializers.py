@@ -62,7 +62,7 @@ class ProductOrderFlatSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     """ Order serializer with list of products. """
     product_list = ProductOrderFlatSerializer(source='productorder_set', read_only=True, many=True)
-    status = CharField(source='get_status_display')
+    state = CharField(source='get_state_display')
 
     class Meta:
         model = Order
