@@ -1,5 +1,7 @@
 import rest_framework
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import Http404
@@ -9,6 +11,8 @@ from restbuck_app.serializers import *
 
 class Menu(APIView):
     """ handle list of products for client order """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         """ GET: all product with their feature and features values """
@@ -25,6 +29,8 @@ def get_auth_user(request):
 
 class OrderView(APIView):
     """ handle client order API """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk: int, user: User):
         """ get order by id and check if is related to request user.

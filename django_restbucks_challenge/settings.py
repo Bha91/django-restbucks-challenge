@@ -41,9 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'restbuck_app.apps.RestbuckAppConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'django.contrib.admindocs',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -74,7 +80,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'django_restbucks_challenge.wsgi.application'
-
 
 
 DATABASES = {
