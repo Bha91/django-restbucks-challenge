@@ -24,7 +24,7 @@ class Menu(APIView):
 
 def get_auth_user(request):
     """ method in phase development bypass authentication"""
-    return User.objects.get(id=1)
+    return request.user
 
 
 class OrderView(APIView):
