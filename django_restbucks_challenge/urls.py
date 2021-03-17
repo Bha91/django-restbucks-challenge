@@ -20,9 +20,9 @@ from django.urls import path, include
 from restbuck_app import views
 
 urlpatterns = [
-    path('menu/', views.Menu.as_view()),
-    path('client_order/', views.OrderView.as_view()),
-    path('client_order/<int:pk>/', views.OrderView.as_view()),
+    path('menu/', views.Menu.as_view(), name='get_menu'),
+    path('client_order/', views.OrderView.as_view(), name='client_order'),
+    path('client_order/<int:pk>/', views.OrderView.as_view(), name='client_order'),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     ]
