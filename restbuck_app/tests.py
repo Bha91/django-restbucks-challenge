@@ -1,5 +1,12 @@
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
+from restbuck_app.serializers import *
 from restbuck_app.models import *
+
+client = APIClient()
 
 
 class FeatureModelTest(TestCase):
@@ -65,5 +72,48 @@ class OrderTest(TestCase):
         order = Order.objects.get(id=1)
         field_label = order._meta.get_field('is_deleted').verbose_name
         self.assertEqual(field_label, 'is deleted')
+
+
+class MenuViewTest(TestCase):
+    def setUp(self) -> None:
+        size_feature = Feature.objects.create(title='size')
+        thermal_feature = Feature.objects.create(title='thermal')
+        FeaturesValue.objects.create(title='small', feature=size_feature)
+        FeaturesValue.objects.create(title='big', feature=size_feature)
+        FeaturesValue.objects.create(title='cold', feature=thermal_feature)
+        FeaturesValue.objects.create(title='hot', feature=thermal_feature)
+        Product.objects.create(title='water', cost='2', feature=size_feature)
+        Product.objects.create(title='milk', cost='4', feature=thermal_feature)
+        user = User.objects.create(username='test1', password='Ronash#1234')
+        token = Token.objects.create(user=user)
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def test_get_menu_ok(self):
+        response = client.get(reverse('get_menu'))
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        self.assertEqual(response.data.get('data'), serializer.data)
+        self.assertFalse(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_menu_not_authenticated(self):
+        client.logout()
+        response = client.get(reverse('get_menu'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class OrderViewTest(TestCase):
+    def setUp(self) -> None:
+        size_feature = Feature.objects.create(title='size')
+        thermal_feature = Feature.objects.create(title='thermal')
+        FeaturesValue.objects.create(title='small', feature=size_feature)
+        FeaturesValue.objects.create(title='big', feature=size_feature)
+        FeaturesValue.objects.create(title='cold', feature=thermal_feature)
+        FeaturesValue.objects.create(title='hot', feature=thermal_feature)
+        Product.objects.create(title='water', cost='2', feature=size_feature)
+        Product.objects.create(title='milk', cost='4', feature=thermal_feature)
+        user = User.objects.create(username='test1', password='Ronash#1234')
+        token = Token.objects.create(user=user)
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
 
