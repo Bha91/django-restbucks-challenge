@@ -3,6 +3,7 @@ from restbuck_app.models import *
 
 
 class FeatureModelTest(TestCase):
+    @classmethod
     def setUpTestData(cls):
         """ set up test object used by test class. """
 
@@ -10,7 +11,7 @@ class FeatureModelTest(TestCase):
 
     def test_title_max_length(self):
         feature = Feature.objects.get(id=1)
-        max_length = feature._meta.get_field('title').max_lenght
+        max_length = feature._meta.get_field('title').max_length
         self.assertEqual(max_length, 255)
 
     def test_str_is_feature_title(self):
@@ -20,8 +21,9 @@ class FeatureModelTest(TestCase):
 
 
 class FeaturesValueModelTest(TestCase):
+    @classmethod
     def setUpTestData(cls):
-        feature = Feature.objects.get(id=1)
+        feature = Feature.objects.create(title='thermal_condition')
         FeaturesValue.objects.create(feature=feature, title='cold')
         FeaturesValue.objects.create(feature=feature, title='hot')
 
@@ -32,18 +34,19 @@ class FeaturesValueModelTest(TestCase):
 
     def test_title_max_length(self):
         feature_value = FeaturesValue.objects.get(id=1)
-        max_length = feature_value._meta.get_field('title').max_lenght
+        max_length = feature_value._meta.get_field('title').max_length
         self.assertEqual(max_length, 255)
 
 
 class ProductTest(TestCase):
+    @classmethod
     def setUpTestData(cls):
-        feature = Feature.objects.get(id=1)
+        feature = Feature.objects.create(title='thermal_condition')
         Product.objects.create(title='Water', feature=feature, cost=2)
 
     def test_title_max_length(self):
         product = Product.objects.get(id=1)
-        max_length = product._meta.get_field('title').max_lenght
+        max_length = product._meta.get_field('title').max_length
         self.assertEqual(max_length, 255)
 
     def test_str_is_product_title(self):
@@ -53,6 +56,7 @@ class ProductTest(TestCase):
 
 
 class OrderTest(TestCase):
+    @classmethod
     def setUpTestData(cls):
         user = User.objects.create_user(username='testuser1', password='Drc#1234')
         Order.objects.create(user=user)

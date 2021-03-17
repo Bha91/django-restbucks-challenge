@@ -110,7 +110,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         """ override default save method to notify user on state change."""
-
+        # TODO: function extraction and notify class
         if self.previous_state != self.state:
             email_subject = 'Order state changed!'
             email_body = 'your order numbered {} has been changed from {} state to {}.\n Best\nRestBucks CoffeeShop'
