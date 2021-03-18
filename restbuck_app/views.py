@@ -32,7 +32,8 @@ class OrderView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, pk: int, user: User):
+    @staticmethod
+    def get_object(pk: int, user: User):
         """ get order by id and check if is related to request user.
 
         :param user: Order owner, an User onject
