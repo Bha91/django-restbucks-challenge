@@ -47,6 +47,7 @@ class OrderView(APIView):
             response_status = status.HTTP_200_OK
             if order.user != user:
                 response_status = status.HTTP_403_FORBIDDEN
+                order = None
             return order, response_status
         else:
             return None, status.HTTP_404_NOT_FOUND
