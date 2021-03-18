@@ -186,7 +186,7 @@ class OrderViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data.get('message'), 'requested order dose not exist')
 
-    # TODO: get, deleted orders already deleted before
+    # TODO: Test get & delete orders already deleted before
 
     def test_post_new_order(self):
         product = Product.objects.get(id=1)
