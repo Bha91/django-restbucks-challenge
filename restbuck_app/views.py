@@ -122,6 +122,8 @@ class OrderView(APIView):
                 return Response({'error': True, 'message': 'requested order dose not exist'}, response_status)
             elif response_status == status.HTTP_403_FORBIDDEN:
                 return Response({'error': True, 'message': 'Not your order'}, response_status)
+            elif order.state != OrderStatus.waiting:
+                return Response({'error': True, 'message': 'Not valid order state'}, status.HTTP_400_BAD_REQUEST)
         elif pk < 0:
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
         else:
