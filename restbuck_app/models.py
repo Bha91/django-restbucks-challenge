@@ -2,6 +2,8 @@ from django.core.mail import send_mail
 from django.db import models
 from django.contrib.auth.models import User
 from django_restbucks_challenge.settings import EMAIL_SENDER_NOREPLAY
+from restbuck_app import notifications
+from restbuck_app.notifications import ClientOrderStatusChange
 
 
 class ConsumeLocation(models.Model):
@@ -111,17 +113,11 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         """ override default save method to notify user on state change."""
-        # TODO: function extraction and notify class
         if self.previous_state != self.state:
-            email_subject = 'Order state changed!'
-            email_body = 'your order numbered {} has been changed from {} state to {}.\n Best\nRestBucks CoffeeShop'
-            send_mail(
-                email_subject,
-                email_body.format(self.id, self.get_previous_state_display(), self.get_state_display()),
-                EMAIL_SENDER_NOREPLAY,
-                [self.user.email],
-                fail_silently=False,
-            )
+            cosc = ClientOrderStatusChange()
+            cosc.send_email(receiver=self.user.email, order_id=self.id,
+                            previous_state=self.get_previous_state_display(),
+                            new_state=self.get_state_display())
             self.previous_state = self.state
         return super(Order, self).save(*args, **kwargs)
 
