@@ -3,6 +3,7 @@
 While I understand that this is not the best thing to do, I initially focused on developing the application's logic and will add a UnitTest, Docstring and security to the project at the end. The goal was simply to speed up and get a tangible output as soon as possible.
 
 Project progress can been seen in this [link](https://trello.com/b/j5cI8KMt/restbuck-challenge)
+
 Project Rest API request can be access in this [Postman collection](https://www.getpostman.com/collections/e689d7da1ec6aeb49f6a)
 
 # Django Restbucks Challenage
