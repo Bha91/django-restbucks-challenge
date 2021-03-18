@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from restbuck_app.serializers import *
 from restbuck_app.models import *
+from restbuck_app.views import OrderView
 
 client = APIClient()
 
@@ -112,8 +113,136 @@ class OrderViewTest(TestCase):
         FeaturesValue.objects.create(title='hot', feature=thermal_feature)
         Product.objects.create(title='water', cost='2', feature=size_feature)
         Product.objects.create(title='milk', cost='4', feature=thermal_feature)
-        user = User.objects.create(username='test1', password='Ronash#1234')
-        token = Token.objects.create(user=user)
+        user1 = User.objects.create(username='test1', password='Ronash#1234')
+        user2 = User.objects.create(username='test2', password='Ronash#1234')
+        Order.objects.create(user=user1)
+        Order.objects.create(user=user1, state=OrderStatus.preparation)
+        Order.objects.create(user=user2)
+        token = Token.objects.create(user=user1)
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def test_get_single_order_by_id(self):
+        user = User.objects.get(id=1)
+        order = Order.objects.filter(user=user).first()
+        serializer = OrderSerializer(order)
+        response = client.get(reverse('client_order', args=(order.id,)))
+        self.assertEqual(response.data.get('data'), serializer.data)
+        self.assertFalse(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_others_order_403(self):
+        user2 = User.objects.get(id=2)
+        order = Order.objects.filter(user=user2).first()
+        response = client.get(reverse('client_order', args=(order.id,)))
+        self.assertTrue(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data.get('message'), 'Not your order')
+
+    def test_get_not_existed_order(self):
+        response = client.get(reverse('client_order', args=(1000,)))
+        self.assertTrue(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data.get('message'), 'requested order dose not exist')
+
+    def test_get_all_order(self):
+        user = User.objects.get(id=1)
+        orders = Order.objects.filter(user=user)
+        serializer = OrderSerializer(orders, many=True)
+        response = client.get(reverse('client_order'))
+        self.assertEqual(response.data.get('data'), serializer.data)
+        self.assertFalse(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_order_not_authenticated(self):
+        client.logout()
+        response = client.get(reverse('client_order'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_delete_my_waiting_order_by_id(self):
+        user = User.objects.get(id=1)
+        order = Order.objects.filter(user=user, state=OrderStatus.waiting).first()
+        response = client.delete(reverse('client_order', args=(order.id,)))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_my_not_waiting_order_by_id(self):
+        user = User.objects.get(id=1)
+        order = Order.objects.filter(user=user).exclude(state=OrderStatus.waiting).first()
+        response = client.delete(reverse('client_order', args=(order.id,)))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('message'), 'Not valid order state')
+        self.assertTrue(response.data.get('error'))
+
+    def test_delete_others_order_403(self):
+        user2 = User.objects.get(id=2)
+        order = Order.objects.filter(user=user2).first()
+        response = client.delete(reverse('client_order', args=(order.id,)))
+        self.assertTrue(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data.get('message'), 'Not your order')
+
+    def test_delete_not_existed_order(self):
+        response = client.get(reverse('client_order', args=(1000,)))
+        self.assertTrue(response.data.get('error'))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data.get('message'), 'requested order dose not exist')
+
+    # TODO: get, deleted orders already deleted before
+
+    def test_post_new_order(self):
+        product = Product.objects.get(id=1)
+        order = Order.objects.get(id=1)
+        feature_value = FeaturesValue.objects.get(id=1)
+        product_order = ProductOrder.objects.create(product=product, order=order, count=1,
+                                                    consume_location=ConsumeLocation.take_away,
+                                                    feature_value=feature_value)
+        serializer = ProductOrderFlatSerializer(product_order)
+        response = client.post(reverse('client_order'), {'data': [serializer.data]})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_post_update_waiting_order(self):
+        product = Product.objects.get(id=1)
+        order = Order.objects.get(id=1)
+        feature_value = FeaturesValue.objects.get(id=1)
+        product_order = ProductOrder.objects.create(product=product, order=order, count=1,
+                                                    consume_location=ConsumeLocation.take_away,
+                                                    feature_value=feature_value)
+        serializer = ProductOrderFlatSerializer(product_order)
+        response = client.post(reverse('client_order', args=(1,)), {'data': [serializer.data]})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_post_update_not_waiting_order(self):
+        product = Product.objects.get(id=1)
+        user = User.objects.get(id=1)
+        order = Order.objects.filter(user=user).exclude(state=OrderStatus.waiting).first()
+        feature_value = FeaturesValue.objects.get(id=1)
+        product_order = ProductOrder.objects.create(product=product, order=order, count=1,
+                                                    consume_location=ConsumeLocation.take_away,
+                                                    feature_value=feature_value)
+        serializer = ProductOrderFlatSerializer(product_order)
+        response = client.post(reverse('client_order', args=(order.id,)), {'data': [serializer.data]})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('message'), 'Not valid order state')
+        self.assertTrue(response.data.get('error'))
+
+    def test_get_object_ok(self):
+        user = User.objects.get(id=1)
+        order = Order.objects.filter(user=user).first()
+        returned_order, response_status = OrderView.get_object(order.id, user=user)
+        self.assertEqual(returned_order, order)
+        self.assertEqual(response_status, status.HTTP_200_OK)
+
+    def test_get_object_403(self):
+        user = User.objects.get(id=1)
+        order = Order.objects.exclude(user=user).first()
+        returned_order, response_status = OrderView.get_object(order.id, user=user)
+        self.assertEqual(returned_order, None)
+        self.assertEqual(response_status, status.HTTP_403_FORBIDDEN)
+
+    def test_get_object_404(self):
+        user = User.objects.get(id=1)
+        returned_order, response_status = OrderView.get_object(1000, user=user)
+        self.assertEqual(returned_order, None)
+        self.assertEqual(response_status, status.HTTP_404_NOT_FOUND)
+
 
 
