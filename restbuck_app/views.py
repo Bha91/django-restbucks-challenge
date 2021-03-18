@@ -114,8 +114,8 @@ class OrderView(APIView):
         :type pk: int
         :return: API response data and status code
         """
-        # TODO: check product feature possibility
         user = get_auth_user(request)
+        order = None
         if pk > 0:
             order, response_status = self.get_object(pk, user)
             if response_status == status.HTTP_404_NOT_FOUND:
@@ -126,12 +126,11 @@ class OrderView(APIView):
                 return Response({'error': True, 'message': 'Not valid order state'}, status.HTTP_400_BAD_REQUEST)
         elif pk < 0:
             return Response({'error': True, 'message': 'Not valid order id'}, status.HTTP_400_BAD_REQUEST)
-        else:
-            order = Order.objects.create(user=user)
-
         data = request.data.get('data')
         serializer = ProductOrderFlatSerializer(data=data, many=True)
         if serializer.is_valid():
+            if order is None:
+                order = Order.objects.create(user=user)
             # TODO: must be changed for production, specially without log, it is dangerous
             tobe_deleted = ProductOrder.objects.filter(order=order)
             if tobe_deleted.exists():
@@ -139,4 +138,4 @@ class OrderView(APIView):
             serializer.save(order=order)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': True, 'message': serializer.errors[0]}, status=status.HTTP_400_BAD_REQUEST)

@@ -58,6 +58,13 @@ class ProductOrderFlatSerializer(serializers.ModelSerializer):
         fields = ('product', 'product_title', 'count', 'consume_location', 'consume_location_display',
                   'feature_value', 'feature_value_title')
 
+    def validate_feature_value(self, data):
+        feature_value_id = self.initial_data[0].get('feature_value', 0)
+        product_id = self.initial_data[0].get('product', 0)
+        if not FeaturesValue.objects.filter(id=feature_value_id, feature__product=product_id).exists():
+            raise serializers.ValidationError("FeatureValue is not related to product")
+        return data
+
 
 class OrderSerializer(serializers.ModelSerializer):
     """ Order serializer with list of products. """
