@@ -94,7 +94,7 @@ class OrderView(APIView):
             elif response_status == status.HTTP_403_FORBIDDEN:
                 return Response({'error': True, 'message': 'Not your order'}, response_status)
             elif response_status == status.HTTP_200_OK:
-                if order.status == OrderStatus.waiting:
+                if order.state == OrderStatus.waiting:
                     order.is_deleted = True
                     order.save()
                     return Response(status=status.HTTP_200_OK)
