@@ -86,7 +86,8 @@ class ProductOrder(models.Model):
     order = models.ForeignKey('Order', on_delete=models.CASCADE)
     count = models.IntegerField(help_text="number of product client ordered")
     consume_location = models.SmallIntegerField(choices=ConsumeLocation.types)
-    feature_value = models.ForeignKey(FeaturesValue, on_delete=models.PROTECT, help_text="ordered option of product")
+    feature_value = models.ForeignKey(FeaturesValue, on_delete=models.PROTECT, help_text="ordered option of product",
+                                      null=True, blank=True)
 
     def __str__(self):
         return self.count.__str__() + '*' + self.product.title + '--orderNo: ' + self.order.id.__str__()

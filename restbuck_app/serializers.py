@@ -51,7 +51,7 @@ class ProductOrderFlatSerializer(serializers.ModelSerializer):
     """ Product Order flat serializer used for OrderView API. """
     product_title = ReadOnlyField(source='product.title', read_only=True)
     consume_location_display = CharField(source='get_consume_location_display', read_only=True)
-    feature_value_title = CharField(source='feature_value.title', read_only=True)
+    feature_value_title = CharField(source='feature_value.title', read_only=True, required=False)
 
     class Meta:
         model = ProductOrder
