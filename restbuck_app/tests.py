@@ -272,3 +272,24 @@ class FeatureValueSerializerTest(TestCase):
         self.assertEqual(data['id'], self.feature_value_attributes['id'])
 
 
+class FeatureWithValuesSerializerTest(TestCase):
+    def setUp(self) -> None:
+        self.feature_attributes = {
+            'title': 'size'
+        }
+        self.feature = Feature.objects.create(**self.feature_attributes)
+        self.serializer = FeatureValueSerializer(instance=self.feature)
+        self.feature_value_big = FeaturesValue.objects.create(feature=self.feature, title='big')
+        self.feature_value_small = FeaturesValue.objects.create(feature=self.feature, title='small')
+
+    def test_contain_expected_fields(self):
+        data = self.serializer.data
+        self.assertCountEqual(data.keys(), ['title', 'value_list'])
+
+    def test_title_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['title'], self.feature_attributes['title'])
+
+    def test_id_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['id'], self.feature_attributes['id'])
