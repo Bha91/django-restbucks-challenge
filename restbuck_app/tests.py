@@ -278,7 +278,7 @@ class FeatureWithValuesSerializerTest(TestCase):
             'title': 'size'
         }
         self.feature = Feature.objects.create(**self.feature_attributes)
-        self.serializer = FeatureValueSerializer(instance=self.feature)
+        self.serializer = FeatureWithValuesSerializer(instance=self.feature)
         self.feature_value_big = FeaturesValue.objects.create(feature=self.feature, title='big')
         self.feature_value_small = FeaturesValue.objects.create(feature=self.feature, title='small')
 
@@ -290,6 +290,9 @@ class FeatureWithValuesSerializerTest(TestCase):
         data = self.serializer.data
         self.assertEqual(data['title'], self.feature_attributes['title'])
 
-    def test_id_field_content(self):
+    def test_value_list_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data['id'], self.feature_attributes['id'])
+        values = self.feature.featuresvalue_set.all()
+        serialized_fv = FeatureValueSerializer(values, many=True, read_only=True).data
+        self.assertEqual(data['value_list'], serialized_fv)
+
