@@ -1,3 +1,5 @@
+from distutils.command.install import install
+
 from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework import status
@@ -244,5 +246,29 @@ class OrderViewTest(TestCase):
         self.assertEqual(returned_order, None)
         self.assertEqual(response_status, status.HTTP_404_NOT_FOUND)
 
+
+class FeatureValueSerializerTest(TestCase):
+    def setUp(self) -> None:
+        size_feature = Feature.objects.create(title='size')
+        self.feature_value_attributes = {
+            'id': 1,
+            'title': 'big',
+            'feature': size_feature 
+        }
+
+        self.feature_value = FeaturesValue.objects.create(**self.feature_value_attributes)
+        self.serializer = FeatureValueSerializer(instance=self.feature_value)
+
+    def test_contains_expected_fields(self):
+        data = self.serializer.data
+        self.assertCountEqual(data.keys(), ['id', 'title'])
+
+    def test_title_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['title'], self.feature_value_attributes['title'])
+
+    def test_id_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['id'], self.feature_value_attributes['id'])
 
 
