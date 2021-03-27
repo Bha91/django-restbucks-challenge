@@ -253,7 +253,7 @@ class FeatureValueSerializerTest(TestCase):
         self.feature_value_attributes = {
             'id': 1,
             'title': 'big',
-            'feature': size_feature 
+            'feature': size_feature
         }
 
         self.feature_value = FeaturesValue.objects.create(**self.feature_value_attributes)
@@ -296,3 +296,46 @@ class FeatureWithValuesSerializerTest(TestCase):
         serialized_fv = FeatureValueSerializer(values, many=True, read_only=True).data
         self.assertEqual(data['value_list'], serialized_fv)
 
+
+class ProductSerializerTest(TestCase):
+    def setUp(self) -> None:
+        self.feature = Feature.objects.create(title='size')
+        self.feature_value_big = FeaturesValue.objects.create(feature=self.feature, title='big')
+        self.feature_value_small = FeaturesValue.objects.create(feature=self.feature, title='small')
+        self.product_attributes = {
+            'title': 'water',
+            'cost': 2,
+            'id': 1,
+            'feature': self.feature
+        }
+        self.product = Product.objects.create(**self.product_attributes)
+        self.serializer = ProductSerializer(instance=self.product)
+
+    def test_contain_expected_fields(self):
+        data = self.serializer.data
+        self.assertCountEqual(data.keys(), ['id',
+                                            'title',
+                                            'cost',
+                                            'consume_location',
+                                            'feature'])
+
+    def test_title_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['title'], self.product_attributes['title'])
+
+    def test_cost_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['cost'], self.product_attributes['cost'])
+
+    def test_id_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['id'], self.product_attributes['id'])
+
+    def test_consume_location_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['consume_location'], ConsumeLocation.types)
+
+    def test_feature_field_content(self):
+        data = self.serializer.data
+        serialized_feature = FeatureWithValuesSerializer(self.feature).data
+        self.assertEqual(data['feature'], serialized_feature)
