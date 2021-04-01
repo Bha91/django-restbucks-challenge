@@ -390,3 +390,34 @@ class ProductOrderFlatSerializerTest(TestCase):
         self.assertEqual(data['feature_value_title'], self.product_order_attributes['feature_value'].title)
 
 
+class OrderSerializerTest(TestCase):
+    def setUp(self) -> None:
+        self.feature = Feature.objects.create(title='size')
+        self.feature_value_big = FeaturesValue.objects.create(feature=self.feature, title='big')
+        self.product = Product.objects.create(title='water', cost=2, feature=self.feature)
+        self.user = User.objects.create(username='test1', password='Ronash#1234')
+        self.order_attributes = {
+            'user': self.user
+        }
+        self.order = Order.objects.create(**self.order_attributes)
+        self.product_order = ProductOrder.objects.create(product=self.product, order=self.order, count=1,
+                                                         consume_location=ConsumeLocation.take_away,
+                                                         feature_value=self.feature_value_big)
+        self.serializer = OrderSerializer(instance=self.order)
+
+    def test_contain_expected_fields(self):
+        data = self.serializer.data
+        self.assertCountEqual(data.keys(), ['id', 'state', 'product_list'])
+
+    def test_id_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['id'], self.order.id)
+
+    def test_state_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['state'], self.order.get_state_display())
+
+    def test_product_list_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['product_list'], ProductOrderFlatSerializer(self.order.productorder_set, read_only=True,
+                                                                          many=True).data)
