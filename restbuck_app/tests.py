@@ -339,3 +339,54 @@ class ProductSerializerTest(TestCase):
         data = self.serializer.data
         serialized_feature = FeatureWithValuesSerializer(self.feature).data
         self.assertEqual(data['feature'], serialized_feature)
+
+
+class ProductOrderFlatSerializerTest(TestCase):
+    def setUp(self) -> None:
+        self.feature = Feature.objects.create(title='size')
+        self.feature_value_big = FeaturesValue.objects.create(feature=self.feature, title='big')
+        self.feature_value_small = FeaturesValue.objects.create(feature=self.feature, title='small')
+        self.product = Product.objects.create(title='water', cost=2, feature=self.feature)
+        self.product_tea = Product.objects.create(title='tea', cost=5)
+        self.user = User.objects.create(username='test1', password='Ronash#1234')
+        self.order = Order.objects.create(user=self.user)
+        self.product_order_attributes = {
+            'product': self.product,
+            'order': self.order,
+            'count': 1,
+            'consume_location': ConsumeLocation.take_away,
+            'feature_value': self.feature_value_big
+        }
+        self.product_order = ProductOrder.objects.create(**self.product_order_attributes)
+        self.serializer = ProductOrderFlatSerializer(instance=self.product_order)
+
+    def test_contain_expected_fields(self):
+        data = self.serializer.data
+        self.assertCountEqual(data.keys(), ['product', 'product_title', 'count', 'consume_location',
+                                            'consume_location_display', 'feature_value', 'feature_value_title'])
+
+    def test_product_title_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['product_title'], self.product_order_attributes['product'].title)
+
+    def test_product_id_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['product'], self.product_order_attributes['product'].id)
+
+    def test_count_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['count'], self.product_order_attributes['count'])
+
+    def test_consume_location_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['consume_location'], self.product_order_attributes['consume_location'])
+
+    def test_feature_value_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['feature_value'], self.product_order_attributes['feature_value'].id)
+
+    def test_feature_value_title_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data['feature_value_title'], self.product_order_attributes['feature_value'].title)
+
+
