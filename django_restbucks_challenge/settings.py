@@ -18,7 +18,7 @@ Modified settings:
         - admindocs: documentation module of admin panel
 3- TIME_ZONE
 4- local_settings
-
+5- email config
 """
 
 import os
@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
