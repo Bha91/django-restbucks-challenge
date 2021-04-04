@@ -131,7 +131,7 @@ class OrderView(APIView):
         if serializer.is_valid():
             if order is None:
                 order = Order.objects.create(user=user)
-            # TODO: must be changed for production, specially without log, it is dangerous
+            # TODO: must be changed for production, specially without log due to the possibility of Integrity
             tobe_deleted = ProductOrder.objects.filter(order=order)
             if tobe_deleted.exists():
                 tobe_deleted.delete()
