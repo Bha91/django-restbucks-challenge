@@ -23,7 +23,7 @@ class Menu(APIView):
 
 
 def get_auth_user(request):
-    """ method in phase development bypass authentication"""
+    """ get authenticated user"""
     return request.user
 
 
