@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django_restbucks_challenge.settings import EMAIL_SENDER_NOREPLAY
 
 
-class Notify():
+class Notify:
     def __init__(self):
         self.email_sender = EMAIL_SENDER_NOREPLAY
 
