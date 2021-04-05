@@ -9,6 +9,7 @@ from restbuck_app.models import *
 from restbuck_app.serializers import *
 
 
+# TODO: user GenericAPIView or better GenericViewSet
 class Menu(APIView):
     """ handle list of products for client order """
     authentication_classes = [TokenAuthentication]
@@ -27,6 +28,7 @@ def get_auth_user(request):
     return request.user
 
 
+# TODO: user GenericAPIView or better GenericViewSet
 class OrderView(APIView):
     """ handle client order API """
     authentication_classes = [TokenAuthentication]

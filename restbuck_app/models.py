@@ -5,6 +5,8 @@ from django_restbucks_challenge.settings import EMAIL_SENDER_NOREPLAY
 from restbuck_app import notifications
 from restbuck_app.notifications import ClientOrderStatusChange
 
+# TODO: make enums, class attributes or just public enum in models.py or better in choices.py or better IntegerChoices
+
 
 class ConsumeLocation(models.Model):
     """

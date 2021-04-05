@@ -12,6 +12,7 @@ class FeatureValueSerializer(serializers.ModelSerializer):
 class FeatureWithValuesSerializer(serializers.ModelSerializer):
     """ Serialize :model:`restbuck_app.Feature` with nested list of related values """
 
+    # TODO: use FeatureValueSerializer instead of SerializerMethodField
     value_list = SerializerMethodField(read_only=True)
 
     class Meta:
