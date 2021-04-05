@@ -2,6 +2,8 @@ from django.core.mail import send_mail
 
 from django_restbucks_challenge.settings import EMAIL_SENDER_NOREPLAY
 
+# TODO: send email asynchronous, or use django-mailer for bigger projects
+
 
 class Notify:
     def __init__(self):
