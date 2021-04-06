@@ -6,6 +6,11 @@ Project progress can been seen in this [link](https://trello.com/b/j5cI8KMt/rest
 
 Project Rest API request can be access in this [Postman collection](https://www.getpostman.com/collections/e689d7da1ec6aeb49f6a)
 
+### Strengths
+- Model design
+- Test coverage
+- Documentation
+
 # Django Restbucks Challenage
 
 An RESTful django development challenge for managing a small coffee shop
