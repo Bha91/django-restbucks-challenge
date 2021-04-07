@@ -6,6 +6,7 @@ from restbuck_app import notifications
 from restbuck_app.notifications import ClientOrderStatusChange
 
 # TODO: make enums, class attributes or just public enum in models.py or better in choices.py or better IntegerChoices
+#  because models have table that we do not want it
 
 
 class ConsumeLocation(models.Model):
@@ -51,7 +52,7 @@ class Feature(models.Model):
     Feature or option of products, multiple :model:`restbuck_app.Product` may have same feature.
     relation store in :model:`restbuck_app.ProductFeature`.
     """
-
+    # TODO: remove type hint for this obvious cases or at least use in methods that is necessary (almost all methods)
     title: str = models.CharField(max_length=255, help_text="A display title for one product's feature")
     # TODO: change to 'display_name' and  unique 'code' to support multiple 'kind' for different product
 
@@ -115,6 +116,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         """ override default save method to notify user on state change."""
+        # TODO: as it is logically bind to admin, this logic should be handle in admin
         if self.previous_state != self.state:
             cosc = ClientOrderStatusChange()
             cosc.send_email(receiver=self.user.email, order_id=self.id,

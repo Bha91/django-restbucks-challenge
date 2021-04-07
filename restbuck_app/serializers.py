@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField, CharField, ReadOnlyField
 from restbuck_app.models import *
+# TODO: dont use "import *" as it is the case of loop imports, beside of recursive importing.
 
 
 class FeatureValueSerializer(serializers.ModelSerializer):

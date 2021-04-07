@@ -10,6 +10,8 @@ from restbuck_app.models import *
 from restbuck_app.views import OrderView
 
 client = APIClient()
+# TODO: we must subclass classes form DRF APITestCase that has its own APIclient
+# TODO: separate test files
 
 
 class FeatureModelTest(TestCase):

@@ -66,8 +66,10 @@ class OrderView(APIView):
         user = get_auth_user(request)
         if pk > 0:
             order, response_status = self.get_object(pk, user)
+            # TODO: need help, use DRF tools like "get or 404"
             if response_status == status.HTTP_404_NOT_FOUND:
                 return Response({'error': True, 'message': 'requested order dose not exist'}, response_status)
+            # TODO: use has_object_permission for 403
             elif response_status == status.HTTP_403_FORBIDDEN:
                 return Response({'error': True, 'message': 'Not your order'}, response_status)
             elif response_status == status.HTTP_200_OK:

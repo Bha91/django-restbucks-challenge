@@ -1,5 +1,7 @@
 from django.contrib import admin
 from restbuck_app.models import *
+# TODO: do not repeat list_display for all class
+# TODO: put registers together or use decorator
 
 
 class FeatureAdmin(admin.ModelAdmin):

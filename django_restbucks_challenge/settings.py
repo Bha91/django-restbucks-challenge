@@ -126,7 +126,8 @@ EMAIL_SENDER_NOREPLAY = 'noreplay@restbucks.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST_USER = ''
 # EMAIL_HOST_PASSWORD = ''
-
+# TODO: use environment variables like:
+#  https://alicecampkin.medium.com/how-to-set-up-environment-variables-in-django-f3c4db78c55f
 
 try:
     from .local_settings import *
